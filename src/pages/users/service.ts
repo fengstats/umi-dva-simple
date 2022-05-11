@@ -11,7 +11,7 @@ export const getRemoteList = async () => {
 
 // 新增用户
 // data: 单个用户所需的信息
-export const addRecord = async ({ data }) => {
+export const addRecord = async ({ data }: { data: any }) => {
   return request(`/api/users`, {
     method: 'post',
     data,
@@ -21,7 +21,7 @@ export const addRecord = async ({ data }) => {
 // 编辑用户
 // id: 用户ID
 // data: 单个用户所需的信息
-export const editRecord = async ({ id, data }) => {
+export const editRecord = async ({ id, data }: { id: number; data: any }) => {
   return request(`/api/users/${id}`, {
     method: 'put',
     data,
@@ -30,7 +30,7 @@ export const editRecord = async ({ id, data }) => {
 
 // 删除用户
 // id: 用户ID
-export const delRecord = async ({ id }) => {
+export const delRecord = async ({ id }: { id: number }) => {
   return request(`/api/users/${id}`, {
     method: 'delete',
   });

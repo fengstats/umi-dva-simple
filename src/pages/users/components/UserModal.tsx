@@ -1,7 +1,17 @@
-import { useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { Form, Input, Modal, Button } from 'antd';
 
-const UserModal = ({
+import { SingleUserType } from '@/pages/users/data.d';
+
+interface UserModalProps {
+  record: SingleUserType | null;
+  visible: boolean;
+  handleClose: () => void;
+  onFinish: (values: any) => void;
+  onFinishFailed: (errorInfo: any) => void;
+}
+
+const UserModal: FC<UserModalProps> = ({
   record,
   visible,
   handleClose,

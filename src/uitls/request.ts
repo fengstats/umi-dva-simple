@@ -1,10 +1,11 @@
 // umi-request 集中错误处理
 
-import { extend } from 'umi-request';
+import { extend, ResponseError } from 'umi-request';
 import { notification } from 'antd';
 
 // 状态码对应消息提示
-const codeMap = {
+// TODO: 麻了,我真的不知道该填什么了
+const codeMap: any = {
   200: '200 服务器成功返回请求的数据',
   201: '201 新建或修改数据成功。',
   202: '202 一个请求已经进入后台排队（异步任务）。',
@@ -22,7 +23,7 @@ const codeMap = {
   504: '504 网关超时。',
 };
 
-const errorHandler = ({ response, data }) => {
+const errorHandler = ({ response, data }: ResponseError) => {
   console.log('errorHandler data:', data);
   console.log('errorHandler response:', response);
   let errorTitle = '请求错误';
@@ -33,7 +34,7 @@ const errorHandler = ({ response, data }) => {
     // console.log('errorHandler statusText:', response.statusText);
     // 有响应
     if (response.status) {
-      errorText = codeMap[response.status] || response.data;
+      errorText = codeMap[response.status];
     }
     return { msg: errorText };
   } else {
