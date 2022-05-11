@@ -39,7 +39,6 @@ const errorHandler = ({ response, data }) => {
   } else {
     // 无响应
   }
-  console.log('看看到这里了没有————————————');
   notification.error({
     message: errorTitle,
     description: errorText,

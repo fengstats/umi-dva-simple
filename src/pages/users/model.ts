@@ -2,7 +2,7 @@
 import { Reducer, Effect, Subscription } from 'umi';
 import { message } from 'antd';
 
-import { getRemoteList, addRecord, editRecord } from './service';
+import { getRemoteList, addRecord, editRecord, delRecord } from './service';
 
 // 类型定义
 interface UserModelType {
@@ -77,12 +77,12 @@ const UserModel: UserModelType = {
         const res = yield call(editRecord, payload);
         console.log(res);
         if (res?.code === 200) {
-          message.success('编辑用户成功！');
+          message.success(`用户id：${res.data.id} 编辑用户成功！`);
           yield put({
             type: 'getRemote',
           });
         } else {
-          message.error('编辑用户失败！');
+          message.error(res.msg || '编辑用户失败！');
         }
       } catch (error) {
         console.log('catch editUser:', error);
@@ -90,7 +90,22 @@ const UserModel: UserModelType = {
     },
 
     // 删除用户
-    *deleteUser({ payload }, { put, call }) {},
+    *delUser({ payload }, { put, call }) {
+      try {
+        const res = yield call(delRecord, payload);
+        console.log(res);
+        if (res?.code === 200) {
+          message.success(`用户id：${res.data.id} 删除用户成功！`);
+          yield put({
+            type: 'getRemote',
+          });
+        } else {
+          message.error(res.msg || '删除用户失败！');
+        }
+      } catch (error) {
+        console.log('catch delUser:', error);
+      }
+    },
   },
 
   // 订阅

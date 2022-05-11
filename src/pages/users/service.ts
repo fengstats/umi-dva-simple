@@ -27,3 +27,11 @@ export const editRecord = async ({ id, data }) => {
     data,
   });
 };
+
+// 删除用户
+// id: 用户ID
+export const delRecord = async ({ id }) => {
+  return request(`/api/users/${id}`, {
+    method: 'delete',
+  });
+};

@@ -37,7 +37,7 @@ const users = ({ users, dispatch }) => {
           <a onClick={() => handleEdit(record)}>编辑</a>
           <Popconfirm
             title="是否确认删除该用户信息?"
-            onConfirm={() => handleDeleteConfirm(record.id)}
+            onConfirm={() => onDeleteConfirm(record.id)}
             cancelText="取消"
             okText="确认"
           >
@@ -67,12 +67,16 @@ const users = ({ users, dispatch }) => {
     setVisible(false);
   };
 
-  // 控制-删除-确认
-  const handleDeleteConfirm = (id) => {
-    console.log('handleDeleteConfirm:', id);
+  // 请求-确认删除
+  const onDeleteConfirm = (id) => {
+    // console.log('onDeleteConfirm:', id);
+    dispatch({
+      type: 'users/delUser',
+      payload: { id },
+    });
   };
 
-  // 表单-成功的回调
+  // 请求-表单-成功的回调 新增/编辑
   const onFinish = (data) => {
     // console.log(record, data);
     const id = record.id;
