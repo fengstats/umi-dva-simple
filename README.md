@@ -42,3 +42,9 @@ Redux Store State -> Model
 Effect 拆分
 
 - Service: 服务
+
+## antd
+
+### Form
+
+- initialValues: 只有初始化以及重置时生效,不能被 setState 动态更新,需要使用 setFieldsValue 更新

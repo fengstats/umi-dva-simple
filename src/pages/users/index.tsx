@@ -1,8 +1,13 @@
+import { useState } from 'react';
 import { connect } from 'umi';
-import { Table, Tag, Space } from 'antd';
+import { Table, Space } from 'antd';
 
-const users = (props) => {
-  const { users } = props;
+import UserModal from './components/UserModal';
+
+const users = ({ users }) => {
+  const [visible, setVisible] = useState(false);
+  const [record, setRecord] = useState({});
+
   // 列表字段定义
   const columns = [
     {
@@ -24,20 +29,32 @@ const users = (props) => {
     {
       title: '操作',
       key: 'action',
+      // record: 当前行数据
       render: (text, record) => (
         <Space size="middle">
-          <a>Edit &nbsp;&nbsp;</a>
-          <a>Delect</a>
+          <a onClick={() => handleEdit(record)}>编辑</a>
+          <a style={{ color: 'red' }}>删除</a>
         </Space>
       ),
     },
   ];
 
-  console.log('users', users);
+  // 控制-编辑弹框
+  const handleEdit = (record) => {
+    console.log('record =>', record);
+    setRecord(record);
+    setVisible(true);
+  };
+
+  // 控制-弹框关闭
+  const handleClose = () => {
+    setVisible(false);
+  };
 
   return (
     <div className="list-table">
-      <Table columns={columns} dataSource={users.data} />
+      <Table rowKey="id" columns={columns} dataSource={users.data} />
+      <UserModal visible={visible} handleClose={handleClose} record={record} />
     </div>
   );
 };

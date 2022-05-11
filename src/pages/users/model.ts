@@ -38,7 +38,7 @@ const UserModel: UserModelType = {
     *getRemote(action, { put, call }) {
       const res = yield call(getRemoteList);
 
-      console.log('getRemote', res);
+      // console.log('getRemote', res);
 
       yield put({
         type: 'getList',
