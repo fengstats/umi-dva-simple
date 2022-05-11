@@ -8,6 +8,8 @@ const users = ({ users, dispatch }) => {
   const [visible, setVisible] = useState(false);
   const [record, setRecord] = useState({});
 
+  // console.log('users:', users);
+
   // 列表字段定义
   const columns = [
     {

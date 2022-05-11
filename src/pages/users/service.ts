@@ -1,5 +1,5 @@
 // API
-import { request } from 'umi';
+import request from '@/uitls/request';
 
 // 获取用户数据
 export const getRemoteList = async () => {

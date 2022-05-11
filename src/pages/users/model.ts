@@ -27,7 +27,7 @@ const UserModel: UserModelType = {
   // 同步函数
   reducers: {
     getList(state, action) {
-      console.log('reducers -> getList:', action);
+      console.log('reducers -> getList:', action.payload);
       return action.payload;
     },
   },
@@ -41,12 +41,12 @@ const UserModel: UserModelType = {
       try {
         const res = yield call(getRemoteList);
         // console.log('getRemote', res);
-        yield put({
-          type: 'getList',
-          payload: {
-            data: res.data,
-          },
-        });
+        if (res?.code === 200) {
+          yield put({
+            type: 'getList',
+            payload: { data: res.data },
+          });
+        }
       } catch (error) {
         console.log('catch getRemote:', error);
       }
@@ -58,12 +58,12 @@ const UserModel: UserModelType = {
         const res = yield call(addRecord, payload);
         console.log(res);
         if (res.code === 200) {
-          message.success('新增用户成功！');
+          message.success(`用户id：${res.data.id} 新增用户成功！`);
           yield put({
             type: 'getRemote',
           });
         } else {
-          message.error('新增用户失败！');
+          message.error(res.msg || '新增用户失败！');
         }
       } catch (error) {
         console.log('catch editUser:', error);
@@ -76,7 +76,7 @@ const UserModel: UserModelType = {
       try {
         const res = yield call(editRecord, payload);
         console.log(res);
-        if (res.code === 200) {
+        if (res?.code === 200) {
           message.success('编辑用户成功！');
           yield put({
             type: 'getRemote',
