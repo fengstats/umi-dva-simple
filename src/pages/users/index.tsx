@@ -4,11 +4,12 @@ import { Table, Space, Popconfirm, Button } from 'antd';
 
 import UserModal from './components/UserModal';
 
-const users = ({ users, dispatch }) => {
+const users = ({ users, usersLoading, dispatch }) => {
   const [visible, setVisible] = useState(false);
   const [record, setRecord] = useState({});
 
   // console.log('users:', users);
+  console.log('users -> usersLoading:', usersLoading);
 
   // 列表字段定义
   const columns = [
@@ -107,7 +108,12 @@ const users = ({ users, dispatch }) => {
       <Button type="primary" style={{ margin: '10px 0' }} onClick={handleAdd}>
         新增用户
       </Button>
-      <Table rowKey="id" columns={columns} dataSource={users.data} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={users.data}
+        loading={usersLoading}
+      />
       <UserModal
         visible={visible}
         record={record}
@@ -121,10 +127,13 @@ const users = ({ users, dispatch }) => {
 
 // 获取 redux 数据
 const mapStateToProps = (state) => {
-  // (@@dva, loading, router) 除了users以外的其他参数
-  // console.log(rest);
-  const { users } = state;
-  return { users };
+  const { users, loading } = state;
+  // TODO: 这个 loading 中的 users 我目前猜测是 effects 函数调用后更改为 true,处理完成更改为 false
+  console.log('mapStateToProps -> loading:', loading);
+  return {
+    users,
+    usersLoading: loading.models.users,
+  };
 };
 
 // 将 redux 数据传递给当前组件

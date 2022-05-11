@@ -52,7 +52,7 @@ const errorHandler = ({ response, data }) => {
 const request = extend({
   errorHandler,
   // 设置超时时间
-  timeout: 1000,
+  timeout: 30000,
   // 默认错误处理
   // credentials: 'include', // 默认请求是否带上cookie
 });
