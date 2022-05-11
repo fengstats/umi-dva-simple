@@ -48,7 +48,7 @@ const UserModal = ({
             label="名称"
             name="name"
             // 校验规则
-            // rules={[{ required: true, message: 'Please input your name!' }]}
+            rules={[{ required: true, message: 'Please input your name!' }]}
           >
             <Input />
           </Form.Item>

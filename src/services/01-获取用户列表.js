@@ -1,27 +1,25 @@
+const userList = flow.get('userList');
+
+// 只要没有被删除的用户就响应给前端就好啦
+const renderList = userList.filter((item) => item.isDeleted !== 1);
+// 按照创建时间排序一下: 降序排列,升序 rev = 1
+const rev = -1;
+const key = 'createTime';
+const resultList = renderList.sort((a, b) =>
+  a[key] > b[key] ? rev * 1 : rev * -1,
+);
+
 msg.payload = {
-  data: [
-    {
-      id: 41,
-      name: 'zhang2',
-      email: 'zhang2@yahoo.com',
-      createTime: '2020-04-13T14:17:47Z',
-      updateTime: '2020-04-13T14:17:47Z',
-      status: 1,
-    },
-    {
-      id: 38,
-      name: 'zhang1',
-      email: 'zhang1@test.com',
-      createTime: '2020-04-13T13:58:08Z',
-      updateTime: '2020-04-13T13:58:08Z',
-      status: 1,
-    },
-  ],
+  code: 200,
+  data: resultList,
   meta: {
     total: 2,
     perPage: 10,
     page: 1,
   },
 };
+
+node.warn('获取用户列表');
+node.warn(msg.payload);
 
 return msg;
