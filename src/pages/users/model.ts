@@ -1,7 +1,8 @@
 // 约定式的 model 组织方式,不用手动注册 model
 import { Reducer, Effect, Subscription } from 'umi';
+import { message } from 'antd';
 
-import { getRemoteList } from './service';
+import { getRemoteList, addRecord, editRecord } from './service';
 
 // 类型定义
 interface UserModelType {
@@ -26,7 +27,7 @@ const UserModel: UserModelType = {
   // 同步函数
   reducers: {
     getList(state, action) {
-      console.log('reducers getList action =>', action);
+      console.log('reducers -> getList:', action);
       return action.payload;
     },
   },
@@ -36,17 +37,60 @@ const UserModel: UserModelType = {
     // 第一个参数: action {type: "派发类型: 一般不用", payload: "派发数据"}
     // 第二个参数: effects { put: "用于传递 reducers 的数据的函数", call: "请求数据使用" }
     *getRemote(action, { put, call }) {
-      const res = yield call(getRemoteList);
-
-      // console.log('getRemote', res);
-
-      yield put({
-        type: 'getList',
-        payload: {
-          data: res.data,
-        },
-      });
+      // TODO: 后续看看这个 try {} catch {} 如何更优雅的使用
+      try {
+        const res = yield call(getRemoteList);
+        // console.log('getRemote', res);
+        yield put({
+          type: 'getList',
+          payload: {
+            data: res.data,
+          },
+        });
+      } catch (error) {
+        console.log('catch getRemote:', error);
+      }
     },
+
+    // 新增用户
+    *addUser({ payload }, { put, call }) {
+      try {
+        const res = yield call(addRecord, payload);
+        console.log(res);
+        if (res.code === 200) {
+          message.success('新增用户成功！');
+          yield put({
+            type: 'getRemote',
+          });
+        } else {
+          message.error('新增用户失败！');
+        }
+      } catch (error) {
+        console.log('catch editUser:', error);
+      }
+    },
+
+    // 编辑用户
+    *editUser({ payload }, { put, call }) {
+      // console.log('editUser here', payload);
+      try {
+        const res = yield call(editRecord, payload);
+        console.log(res);
+        if (res.code === 200) {
+          message.success('编辑用户成功！');
+          yield put({
+            type: 'getRemote',
+          });
+        } else {
+          message.error('编辑用户失败！');
+        }
+      } catch (error) {
+        console.log('catch editUser:', error);
+      }
+    },
+
+    // 删除用户
+    *deleteUser({ payload }, { put, call }) {},
   },
 
   // 订阅
@@ -54,7 +98,7 @@ const UserModel: UserModelType = {
     setup({ dispatch, history }) {
       // TODO: return 的作用尚不明确
       return history.listen(({ pathname }) => {
-        console.log('history listen pathname =>', pathname);
+        // console.log('subscriptions -> pathname:', pathname);
         if (pathname === '/users') {
           // 分派给 effects
           dispatch({
