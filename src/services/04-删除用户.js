@@ -4,7 +4,7 @@ const params = msg.payload;
 // 转换一下,可能变成了字符串
 const id = parseInt(msg.req.params.id);
 
-node.warn(`删除用户列表,id: ${id} 请求参数: ${JSON.stringify(params)}`);
+node.warn(`删除用户,id: ${id} 请求参数: ${JSON.stringify(params)}`);
 
 msg.payload = {
   code: 4001,

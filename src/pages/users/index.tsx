@@ -1,8 +1,10 @@
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
 import { Table, Space, Popconfirm, Button } from 'antd';
+import ProTable from '@ant-design/pro-table';
 
 import { SingleUserType } from './data.d';
+import { getRemoteList } from './service';
 import UserModal from './components/UserModal';
 
 interface UserPageProps {
@@ -11,8 +13,15 @@ interface UserPageProps {
   dispatch: Dispatch;
 }
 
+interface ActionType {
+  reload: () => void;
+  fetchMore: () => void;
+  reset: () => void;
+}
+
 // FC： function components
 const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
+  const tableRef = useRef<ActionType>();
   const [visible, setVisible] = useState(false);
   const [record, setRecord] = useState<SingleUserType | null>(null);
 
@@ -87,11 +96,33 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     setVisible(false);
   };
 
+  // 控制-刷新列表数据
+  const reloadHandler = () => {
+    tableRef.current.reload();
+  };
+
+  // 请求-用户列表更新
+  const requestHandler = async ({
+    pageSize,
+    current,
+  }: {
+    pageSize: number;
+    current: number;
+  }) => {
+    const res = await getRemoteList({ pageSize, current });
+    const success = res.code === 200 ? true : false;
+    return {
+      success,
+      data: res.data || [],
+      total: res.pagination.total,
+    };
+  };
+
   // 请求-表单-成功的回调 新增/编辑
   const onFinish = (values: any) => {
     // console.log(record, data);
     const id = record ? record.id : -999;
-    if (id) {
+    if (id != -999) {
       // 编辑
       dispatch({
         type: 'users/edit',
@@ -124,14 +155,29 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
 
   return (
     <div className="list-table">
-      <Button type="primary" style={{ margin: '10px 0' }} onClick={handleAdd}>
-        新增用户
-      </Button>
-      <Table
+      {/* <Table
         rowKey="id"
         columns={columns}
         dataSource={users.data}
         loading={usersLoading}
+      /> */}
+      <ProTable
+        rowKey="id"
+        search={false}
+        columns={columns}
+        // dataSource={users.data}
+        loading={usersLoading}
+        request={requestHandler}
+        actionRef={tableRef}
+        pagination={{
+          showSizeChanger: true,
+        }}
+        toolBarRender={() => [
+          <Button type="primary" onClick={handleAdd}>
+            新增用户
+          </Button>,
+          <Button onClick={reloadHandler}>重新加载</Button>,
+        ]}
       />
       <UserModal
         visible={visible}

@@ -5,7 +5,7 @@ const userList = flow.get('userList');
 const params = msg.payload;
 const { name, email = '', status = 1 } = params;
 
-node.warn(`新增用户列表,请求参数: ${JSON.stringify(params)}`);
+node.warn(`新增单个用户,请求参数: ${JSON.stringify(params)}`);
 
 // 必填参数校验
 if (!name) {

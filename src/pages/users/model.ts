@@ -8,10 +8,10 @@ import { getRemoteList, addRecord, editRecord, delRecord } from './service';
 // (通过export导出后,可以直接从umi引入)用户state
 export interface UserStateType {
   data: SingleUserType[];
-  meta: {
-    total: 0;
-    perPage: 5;
-    page: 1;
+  pagination: {
+    total: number;
+    pageSize: number;
+    current: number;
   };
 }
 
@@ -40,10 +40,10 @@ const UserModel: UserModelType = {
   // 数据源
   state: {
     data: [],
-    meta: {
+    pagination: {
       total: 0,
-      perPage: 5,
-      page: 1,
+      pageSize: 5,
+      current: 1,
     },
   },
 
@@ -65,7 +65,7 @@ const UserModel: UserModelType = {
       try {
         const res = yield call(getRemoteList);
         // console.log('getData', res);
-        if (res?.code === 200) {
+        if (res.code === 200) {
           yield put({
             type: 'getList',
             payload: { data: res.data },
@@ -140,9 +140,9 @@ const UserModel: UserModelType = {
         // console.log('subscriptions -> pathname:', pathname);
         if (pathname === '/users') {
           // 分派给 effects
-          dispatch({
-            type: 'getData',
-          });
+          // dispatch({
+          //   type: 'getData',
+          // });
         }
       });
     },

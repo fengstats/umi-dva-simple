@@ -48,3 +48,11 @@ Effect 拆分
 ### Form
 
 - initialValues: 只有初始化以及重置时生效,不能被 setState 动态更新,需要使用 setFieldsValue 更新
+
+## proTable
+
+```shell
+npm i @ant-design/pro-table --save
+# 或者
+yarn add @ant-design/pro-table --save
+```

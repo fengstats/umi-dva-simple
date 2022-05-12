@@ -5,7 +5,7 @@ const params = msg.payload;
 const id = parseInt(msg.req.params.id);
 const { name, email = '', status = 1 } = params;
 
-node.warn(`编辑用户列表,id: ${id} 请求参数: ${JSON.stringify(params)}`);
+node.warn(`编辑用户,id: ${id} 请求参数: ${JSON.stringify(params)}`);
 
 msg.payload = {
   code: 4001,

@@ -2,10 +2,10 @@
 import request from '@/uitls/request';
 
 // 获取用户数据
-export const getRemoteList = async () => {
+export const getRemoteList = async (params = {}) => {
   return request('/api/users', {
     method: 'get',
-    // params: { id: 1 },
+    params,
   });
 };
 

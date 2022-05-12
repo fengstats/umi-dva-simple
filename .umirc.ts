@@ -2,6 +2,8 @@
 import { defineConfig } from 'umi';
 
 export default defineConfig({
+  // 有缓存时启动 1s+，热更新平均 500ms 内
+  mfsu: {},
   nodeModulesTransform: {
     type: 'none',
   },
