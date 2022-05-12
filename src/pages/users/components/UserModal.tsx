@@ -6,6 +6,7 @@ import { SingleUserType } from '@/pages/users/data.d';
 interface UserModalProps {
   record: SingleUserType | null;
   visible: boolean;
+  confirmLoading: boolean;
   handleClose: () => void;
   onFinish: (values: any) => void;
   onFinishFailed: (errorInfo: any) => void;
@@ -14,6 +15,7 @@ interface UserModalProps {
 const UserModal: FC<UserModalProps> = ({
   record,
   visible,
+  confirmLoading,
   handleClose,
   onFinish,
   onFinishFailed,
@@ -21,7 +23,7 @@ const UserModal: FC<UserModalProps> = ({
   const [form] = Form.useForm();
 
   useEffect(() => {
-    console.log('UserModal -> useEffect:', record);
+    // console.log('UserModal -> useEffect:', record);
     // 显示的情况赋值,隐藏的情况重置值
     if (visible) {
       form.setFieldsValue(record);
@@ -41,6 +43,7 @@ const UserModal: FC<UserModalProps> = ({
       <Modal
         title="Basic Modal"
         visible={visible}
+        confirmLoading={confirmLoading}
         onOk={onSubmit}
         onCancel={handleClose}
         // 强制渲染

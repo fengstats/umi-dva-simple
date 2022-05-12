@@ -79,57 +79,57 @@ const UserModel: UserModelType = {
       }
     },
 
-    // 新增用户
-    *add({ payload }, { put, call, select }) {
-      try {
-        const res = yield call(addRecord, payload);
-        console.log(res);
-        if (res.code === 200) {
-          // 通过 select 函数获取 state 数据
-          const { current, pageSize } = yield select(
-            (state) => state.users.pagination,
-          );
-          yield put({
-            type: 'getData',
-            payload: {
-              current,
-              pageSize,
-            },
-          });
-          message.success(`用户id：${res.data.id} 新增用户成功！`);
-        } else {
-          message.error(res.msg || '新增用户失败！');
-        }
-      } catch (error) {
-        console.log('catch edit:', error);
-      }
-    },
+    // (直接将逻辑写到了对应页面中)新增用户
+    // *add({ payload }, { put, call, select }) {
+    //   try {
+    //     const res = yield call(addRecord, payload);
+    //     console.log(res);
+    //     if (res.code === 200) {
+    //       // 通过 select 函数获取 state 数据
+    //       const { current, pageSize } = yield select(
+    //         (state) => state.users.pagination,
+    //       );
+    //       yield put({
+    //         type: 'getData',
+    //         payload: {
+    //           current,
+    //           pageSize,
+    //         },
+    //       });
+    //       message.success(`用户id：${res.data.id} 新增用户成功！`);
+    //     } else {
+    //       message.error(res.msg || '新增用户失败！');
+    //     }
+    //   } catch (error) {
+    //     console.log('catch edit:', error);
+    //   }
+    // },
 
     // 编辑用户
-    *edit({ payload }, { put, call, select }) {
-      // console.log('edit here', payload);
-      try {
-        const res = yield call(editRecord, payload);
-        console.log(res);
-        if (res.code === 200) {
-          const { current, pageSize } = yield select(
-            (state) => state.users.pagination,
-          );
-          yield put({
-            type: 'getData',
-            payload: {
-              current,
-              pageSize,
-            },
-          });
-          message.success(`用户id：${payload.id} 编辑用户成功！`);
-        } else {
-          message.error(res.msg || '编辑用户失败！');
-        }
-      } catch (error) {
-        console.log('catch edit:', error);
-      }
-    },
+    // *edit({ payload }, { put, call, select }) {
+    //   // console.log('edit here', payload);
+    //   try {
+    //     const res = yield call(editRecord, payload);
+    //     console.log(res);
+    //     if (res.code === 200) {
+    //       const { current, pageSize } = yield select(
+    //         (state) => state.users.pagination,
+    //       );
+    //       yield put({
+    //         type: 'getData',
+    //         payload: {
+    //           current,
+    //           pageSize,
+    //         },
+    //       });
+    //       message.success(`用户id：${payload.id} 编辑用户成功！`);
+    //     } else {
+    //       message.error(res.msg || '编辑用户失败！');
+    //     }
+    //   } catch (error) {
+    //     console.log('catch edit:', error);
+    //   }
+    // },
 
     // 删除用户
     *delete({ payload }, { put, call, select }) {

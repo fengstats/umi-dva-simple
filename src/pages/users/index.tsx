@@ -1,10 +1,10 @@
 import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
-import { Table, Space, Popconfirm, Button, Pagination } from 'antd';
+import { Table, Space, Popconfirm, Button, Pagination, message } from 'antd';
 import ProTable from '@ant-design/pro-table';
 
 import { SingleUserType } from './data.d';
-// import { getRemoteList } from './service';
+import { getRemoteList, addRecord, editRecord } from './service';
 import UserModal from './components/UserModal';
 
 interface UserPageProps {
@@ -23,6 +23,8 @@ interface ActionType {
 const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   const tableRef = useRef<ActionType>();
   const [visible, setVisible] = useState(false);
+  // 新增/编辑确认Loading
+  const [confirmLoading, setConfirmLoading] = useState(false);
   const [record, setRecord] = useState<SingleUserType | null>(null);
 
   // console.log('users:', users);
@@ -131,24 +133,44 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   // };
 
   // 请求-表单-成功的回调 新增/编辑
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
+    // 打开-确认loading
+    setConfirmLoading(true);
     // console.log(record, data);
+    let serviceFunc;
+    // 默认新增
+    let tipText;
     const id = record ? record.id : -999;
     if (id != -999) {
-      // 编辑
-      dispatch({
-        type: 'users/edit',
-        payload: { id, data: values },
-      });
+      tipText = '编辑';
+      serviceFunc = editRecord;
     } else {
-      // 新增
-      dispatch({
-        type: 'users/add',
-        payload: { data: values },
-      });
+      tipText = '新增';
+      serviceFunc = addRecord;
     }
-    // 关闭弹框
-    handleClose();
+    try {
+      const res = await serviceFunc({ id, data: values });
+      console.log(res);
+      if (res.code == 200) {
+        message.success(`用户id：${res.data.id} ${tipText}用户成功！`);
+        dispatch({
+          type: 'users/getData',
+          payload: {
+            current: users.pagination.current,
+            pageSize: users.pagination.pageSize,
+          },
+        });
+        // 关闭弹框
+        handleClose();
+        return;
+      }
+      message.error(res.msg || `${tipText}用户失败！`);
+    } catch (error) {
+      console.log(`catch ${tipText}:`, error);
+    } finally {
+      // 关闭确认loading
+      setConfirmLoading(false);
+    }
   };
 
   // 请求-确认删除
@@ -203,6 +225,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       <UserModal
         visible={visible}
         record={record}
+        confirmLoading={confirmLoading}
         handleClose={handleClose}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
