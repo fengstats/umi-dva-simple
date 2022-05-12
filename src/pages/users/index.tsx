@@ -1,10 +1,10 @@
 import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
-import { Table, Space, Popconfirm, Button } from 'antd';
+import { Table, Space, Popconfirm, Button, Pagination } from 'antd';
 import ProTable from '@ant-design/pro-table';
 
 import { SingleUserType } from './data.d';
-import { getRemoteList } from './service';
+// import { getRemoteList } from './service';
 import UserModal from './components/UserModal';
 
 interface UserPageProps {
@@ -26,7 +26,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   const [record, setRecord] = useState<SingleUserType | null>(null);
 
   // console.log('users:', users);
-  console.log('users -> usersLoading:', usersLoading);
+  // console.log('users -> usersLoading:', usersLoading);
 
   // 列表字段定义
   const columns = [
@@ -101,22 +101,34 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     tableRef.current.reload();
   };
 
-  // 请求-用户列表更新
-  const requestHandler = async ({
-    pageSize,
-    current,
-  }: {
-    pageSize: number;
-    current: number;
-  }) => {
-    const res = await getRemoteList({ pageSize, current });
-    const success = res.code === 200 ? true : false;
-    return {
-      success,
-      data: res.data || [],
-      total: res.pagination.total,
-    };
+  // 控制-翻页(页码更新回调函数)
+  const onPaginationHandler = (current: number, pageSize: number) => {
+    console.log(`current: ${current} pageSize: ${pageSize}`);
+    dispatch({
+      type: 'users/getData',
+      payload: {
+        current,
+        pageSize,
+      },
+    });
   };
+
+  // (与dataSource冲突,存在一些问题,所以考虑不使用)请求-用户列表更新
+  // const requestHandler = async ({
+  //   pageSize,
+  //   current,
+  // }: {
+  //   pageSize: number;
+  //   current: number;
+  // }) => {
+  //   const res = await getRemoteList({ pageSize, current });
+  //   const success = res.code === 200 ? true : false;
+  //   return {
+  //     success,
+  //     data: res.data || [],
+  //     total: res.pagination.total,
+  //   };
+  // };
 
   // 请求-表单-成功的回调 新增/编辑
   const onFinish = (values: any) => {
@@ -165,19 +177,28 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
         rowKey="id"
         search={false}
         columns={columns}
-        // dataSource={users.data}
+        dataSource={users.data}
         loading={usersLoading}
-        request={requestHandler}
+        // request={requestHandler}
         actionRef={tableRef}
-        pagination={{
-          showSizeChanger: true,
-        }}
+        pagination={false}
         toolBarRender={() => [
           <Button type="primary" onClick={handleAdd}>
             新增用户
           </Button>,
           <Button onClick={reloadHandler}>重新加载</Button>,
         ]}
+      />
+      <Pagination
+        className="list-pagination"
+        current={users.pagination.current}
+        total={users.pagination.total}
+        pageSize={users.pagination.pageSize}
+        showSizeChanger
+        showQuickJumper
+        showTotal={(total) => `Total ${total} items`}
+        onChange={onPaginationHandler}
+        pageSizeOptions={[5, 8, 12]}
       />
       <UserModal
         visible={visible}
@@ -194,7 +215,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
 const mapStateToProps = (state: { users: UserStateType; loading: Loading }) => {
   const { users, loading } = state;
   // TODO: 这个 loading 中的 users 我目前猜测是 effects 函数调用后更改为 true,处理完成更改为 false
-  console.log('mapStateToProps -> loading:', loading);
+  // console.log('mapStateToProps -> loading:', loading);
   return {
     users,
     usersLoading: loading.models.users,

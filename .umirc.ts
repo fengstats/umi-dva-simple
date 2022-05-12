@@ -16,7 +16,8 @@ export default defineConfig({
   proxy: {
     // 例如: 访问 /api/users, 实则访问的是 http://localhost:1880/umidvaPro/users
     '/api': {
-      target: 'http://localhost:1880/umidvaPro',
+      // target: 'http://localhost:1880/umidvaPro',
+      target: 'http://121.4.83.62:1880/umidvaPro',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },

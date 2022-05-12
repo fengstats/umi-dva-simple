@@ -60,15 +60,18 @@ const UserModel: UserModelType = {
     // 获取用户数据
     // 第一个参数: action {type: "派发类型: 一般不用", payload: "派发数据"}
     // 第二个参数: effects { put: "用于传递 reducers 的数据的函数", call: "请求数据使用" }
-    *getData(action, { put, call }) {
+    *getData({ payload }, { put, call }) {
       // TODO: 后续看看这个 try {} catch {} 如何更优雅的使用
       try {
-        const res = yield call(getRemoteList);
+        const res = yield call(getRemoteList, payload);
         // console.log('getData', res);
         if (res.code === 200) {
           yield put({
             type: 'getList',
-            payload: { data: res.data },
+            payload: {
+              data: res.data,
+              pagination: res.pagination,
+            },
           });
         }
       } catch (error) {
@@ -77,15 +80,23 @@ const UserModel: UserModelType = {
     },
 
     // 新增用户
-    *add({ payload }, { put, call }) {
+    *add({ payload }, { put, call, select }) {
       try {
         const res = yield call(addRecord, payload);
         console.log(res);
         if (res.code === 200) {
-          message.success(`用户id：${res.data.id} 新增用户成功！`);
+          // 通过 select 函数获取 state 数据
+          const { current, pageSize } = yield select(
+            (state) => state.users.pagination,
+          );
           yield put({
             type: 'getData',
+            payload: {
+              current,
+              pageSize,
+            },
           });
+          message.success(`用户id：${res.data.id} 新增用户成功！`);
         } else {
           message.error(res.msg || '新增用户失败！');
         }
@@ -95,16 +106,23 @@ const UserModel: UserModelType = {
     },
 
     // 编辑用户
-    *edit({ payload }, { put, call }) {
+    *edit({ payload }, { put, call, select }) {
       // console.log('edit here', payload);
       try {
         const res = yield call(editRecord, payload);
         console.log(res);
         if (res.code === 200) {
-          message.success(`用户id：${payload.id} 编辑用户成功！`);
+          const { current, pageSize } = yield select(
+            (state) => state.users.pagination,
+          );
           yield put({
             type: 'getData',
+            payload: {
+              current,
+              pageSize,
+            },
           });
+          message.success(`用户id：${payload.id} 编辑用户成功！`);
         } else {
           message.error(res.msg || '编辑用户失败！');
         }
@@ -114,15 +132,22 @@ const UserModel: UserModelType = {
     },
 
     // 删除用户
-    *delete({ payload }, { put, call }) {
+    *delete({ payload }, { put, call, select }) {
       try {
         const res = yield call(delRecord, payload);
         console.log(res);
-        if (res?.code === 200) {
-          message.success(`用户id：${payload.id} 删除用户成功！`);
+        if (res.code === 200) {
+          const { current, pageSize } = yield select(
+            (state) => state.users.pagination,
+          );
           yield put({
             type: 'getData',
+            payload: {
+              current,
+              pageSize,
+            },
           });
+          message.success(`用户id：${payload.id} 删除用户成功！`);
         } else {
           message.error(res.msg || '删除用户失败！');
         }
@@ -140,9 +165,13 @@ const UserModel: UserModelType = {
         // console.log('subscriptions -> pathname:', pathname);
         if (pathname === '/users') {
           // 分派给 effects
-          // dispatch({
-          //   type: 'getData',
-          // });
+          dispatch({
+            type: 'getData',
+            payload: {
+              current: 1,
+              pageSize: 5,
+            },
+          });
         }
       });
     },
