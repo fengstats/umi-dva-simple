@@ -91,7 +91,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       key: 'action',
       valueType: 'option',
       // record: 当前行数据
-      render: (text: any, record: SingleUserType) => (
+      render: (_, record: SingleUserType) => (
         <Space size="middle">
           <a onClick={() => handleEdit(record)}>编辑</a>
           <Popconfirm
@@ -234,6 +234,20 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     });
   };
 
+  // 渲染-用户弹框
+  const renderUserModal = () => {
+    return (
+      <UserModal
+        visible={visible}
+        record={record}
+        confirmLoading={confirmLoading}
+        handleClose={handleClose}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+      />
+    );
+  };
+
   return (
     <div className="list-table">
       {/* <Table
@@ -284,14 +298,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
         onChange={onPaginationHandler}
         pageSizeOptions={[5, 8, 12]}
       />
-      <UserModal
-        visible={visible}
-        record={record}
-        confirmLoading={confirmLoading}
-        handleClose={handleClose}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-      />
+      {renderUserModal()}
     </div>
   );
 };

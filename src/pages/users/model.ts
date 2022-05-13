@@ -70,7 +70,8 @@ const UserModel: UserModelType = {
           yield put({
             type: 'getList',
             payload: {
-              data: res.data,
+              // TIP: 校验一层,看看是不是数组
+              data: Array.isArray(res.data) ? res.data : [],
               pagination: res.pagination,
             },
           });
