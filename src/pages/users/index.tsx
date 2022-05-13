@@ -1,6 +1,14 @@
 import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
-import { Table, Space, Popconfirm, Button, Pagination, message } from 'antd';
+import {
+  Table,
+  Space,
+  Popconfirm,
+  Button,
+  Switch,
+  Pagination,
+  message,
+} from 'antd';
 import ProTable, { ProColumns } from '@ant-design/pro-table';
 import moment from 'moment';
 
@@ -43,20 +51,24 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     {
       title: 'ID',
       dataIndex: 'id',
+      // 数值类型
+      valueType: 'digit',
       key: 'id',
     },
     {
       title: '用户名称',
       dataIndex: 'name',
+      valueType: 'text',
       key: 'name',
-      width: '150px',
+      // width: '150px',
       render: (text: any) => <a>{text}</a>,
     },
     {
       title: '用户状态',
       dataIndex: 'status',
-
       key: 'status',
+      // TODO: 后面有时间补充一下切换功能
+      render: (text: any) => <Switch disabled checked={Boolean(text)} />,
     },
     {
       title: '创建时间',
@@ -77,6 +89,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     {
       title: '操作',
       key: 'action',
+      valueType: 'option',
       // record: 当前行数据
       render: (text: any, record: SingleUserType) => (
         <Space size="middle">
