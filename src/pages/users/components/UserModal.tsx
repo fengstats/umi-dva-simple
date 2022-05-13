@@ -25,12 +25,12 @@ const UserModal: FC<UserModalProps> = ({
 
   useEffect(() => {
     // console.log('UserModal -> useEffect:', record);
-    // 显示的情况赋值,隐藏的情况重置值
-    if (visible) {
+    // TIP: record 存在的情况赋值,隐藏的情况重置值
+    if (record?.id) {
       form.setFieldsValue({
         ...record,
         createTime: moment(record?.createTime),
-        status: record?.status ? true : false,
+        status: Boolean(record?.status),
       });
     } else {
       form.resetFields();
@@ -59,6 +59,9 @@ const UserModal: FC<UserModalProps> = ({
         <Form
           name="basic"
           form={form}
+          initialValues={{
+            status: true,
+          }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
@@ -74,7 +77,7 @@ const UserModal: FC<UserModalProps> = ({
             <Input placeholder="请输入用户邮箱" />
           </Form.Item>
           <Form.Item label="时间" name="createTime">
-            <DatePicker showTime />
+            <DatePicker placeholder="请选择创建日期" showTime />
           </Form.Item>
           <Form.Item label="状态" name="status" valuePropName="checked">
             <Switch />

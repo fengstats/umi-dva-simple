@@ -3,7 +3,7 @@ const userList = flow.get('userList');
 const params = msg.payload;
 // 转换一下,可能变成了字符串
 const id = parseInt(msg.req.params.id);
-const { name, email = '', status = 1 } = params;
+const { name, createTime, email = '', status = 1 } = params;
 
 node.warn(`编辑用户,id: ${id} 请求参数: ${JSON.stringify(params)}`);
 
@@ -13,7 +13,7 @@ msg.payload = {
   msg: 'ID与名称为必传参数，请检查参数传递！',
 };
 // 必填参数校验
-if (!id && !name) {
+if (!id || !name) {
   return msg;
 }
 
@@ -25,15 +25,17 @@ if (!user) {
 }
 
 // 编辑操作
-const curTime = new Date(+new Date() + 1000 * 60 * 60 * 8).toISOString();
+// +new Date() + 1000 * 60 * 60 * 8
+const curTime = new Date().toISOString();
 user.name = name;
 user.email = email;
 user.status = status;
+user.createTime = createTime ? createTime : user.createTime;
 user.updateTime = curTime;
 
 msg.payload = {
   code: 200,
-  data: params,
+  data: user,
   msg: '编辑用户成功',
 };
 

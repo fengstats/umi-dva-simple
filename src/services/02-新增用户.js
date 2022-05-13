@@ -3,7 +3,7 @@ const id = flow.get('id') + 1;
 // 获取用户列表信息
 const userList = flow.get('userList');
 const params = msg.payload;
-const { name, email = '', status = 1 } = params;
+const { name, createTime, email = '', status = 1 } = params;
 
 node.warn(`新增单个用户,请求参数: ${JSON.stringify(params)}`);
 
@@ -18,7 +18,8 @@ if (!name) {
 }
 
 // UTC时区需要+8小时才能与北京时间相等
-const curTime = new Date(+new Date() + 1000 * 60 * 60 * 8).toISOString();
+// +new Date() + 1000 * 60 * 60 * 8
+const curTime = new Date().toISOString();
 // 新增操作
 userList.push({
   id,
@@ -27,7 +28,7 @@ userList.push({
   status,
   // 软删除标记
   isDeleted: 0,
-  createTime: curTime,
+  createTime: createTime ? createTime : curTime,
   updateTime: curTime,
 });
 

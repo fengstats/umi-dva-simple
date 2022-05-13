@@ -1,7 +1,7 @@
 import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
 import { Table, Space, Popconfirm, Button, Pagination, message } from 'antd';
-import ProTable, { ColumnsState } from '@ant-design/pro-table';
+import ProTable, { ProColumns } from '@ant-design/pro-table';
 import moment from 'moment';
 
 import { SingleUserType } from './data.d';
@@ -33,7 +33,13 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   // console.log('users -> usersLoading:', usersLoading);
 
   // 列表字段定义
-  const columns = [
+  const columns: ProColumns<SingleUserType>[] = [
+    {
+      title: '序号',
+      dataIndex: 'index',
+      valueType: 'indexBorder',
+      // key: ''
+    },
     {
       title: 'ID',
       dataIndex: 'id',
@@ -44,7 +50,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       dataIndex: 'name',
       key: 'name',
       width: '150px',
-      render: (text: string) => <a>{text}</a>,
+      render: (text: any) => <a>{text}</a>,
     },
     {
       title: '用户状态',
@@ -68,7 +74,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       title: '操作',
       key: 'action',
       // record: 当前行数据
-      render: (text: string, record: SingleUserType) => (
+      render: (text: any, record: SingleUserType) => (
         <Space size="middle">
           <a onClick={() => handleEdit(record)}>编辑</a>
           <Popconfirm
@@ -138,6 +144,13 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
 
   // 请求-表单-成功的回调 新增/编辑
   const onFinish = async (values: any) => {
+    // 格式化转换
+    const data = {
+      ...values,
+      status: Number(values.status),
+      createTime: values.createTime ? values.createTime.toISOString() : '',
+    };
+    console.log(data);
     // 打开-确认loading
     setConfirmLoading(true);
     // console.log(record, data);
@@ -153,7 +166,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       serviceFunc = addRecord;
     }
     try {
-      const res = await serviceFunc({ id, data: values });
+      const res = await serviceFunc({ id, data });
       console.log(res);
       if (res.code == 200) {
         message.success(`用户id：${res.data.id} ${tipText}用户成功！`);
