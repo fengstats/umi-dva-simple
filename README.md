@@ -1,18 +1,52 @@
-# umi project
+# 用户管理
 
-## Getting Started
+## 先听我讲两句
 
-Install dependencies,
+技术栈：Umi3 + dva + antd + proTable + TypeScript
+
+功能不多，主要是学习 Umi3 和 dva 的项目开发流程
+
+这是基于张立志老师在b站的免费课程学习后，自己慢慢实现的，前前后后因为要上班的缘故花费了两三天的时间，（讲真！真的很不错的，较为适合新手入门），感兴趣的点击下面的链接访问学习即可，再次感谢张老师！！！
+
+对了，还想补充的一点是项目的后台服务，因为整体的业务逻辑流程并不复杂，所以我就直接使用 Node-RED 这个小工具实现了一下，目前不出意外的话部署在我的个人服务器上（看心情，指不定啥时候停了），接口代码部分在 src/pages/services 下，不要慌～ js 实现的，当然我也导出了一个 flows.json 文件，可以用于 Node-RED 直接导入使用
+
+如果对 Node-RED 感兴趣的下方链接也有，很有意思的一个小玩意，快速实现你的一些想法💡
+
+代码内部请求的地址就是我的云服务接口地址，可能和张老师实现的有点不一样，按照自己的想法写的，嘿嘿，如果你运气好，应该能用...（不过最好自己本地起一个自己慢慢玩，毕竟玩别人的不如自己写有意思，是吧？）🐶
+
+[张老师课程地址](https://www.aspirantzhang.com/dva3.html)
+
+[Node-RED](https://nodered.org/)
+
+## 快速开始
 
 ```bash
+# 安装依赖
 $ yarn
-```
 
-Start the dev server,
-
-```bash
+# 启动服务
 $ yarn start
 ```
+
+## 预览截图
+
+### 用户列表
+
+![](./resource/01-userList.png)
+
+### 新增用户
+
+![](./resource/02-userAdd.png)
+
+### 编辑用户
+
+![](./resource/03-userEdit.png)
+
+### 删除用户
+
+![](./resource/04-userDel.png)
+
+### 删除用户
 
 ## 用户目录规划
 
