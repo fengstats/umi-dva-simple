@@ -56,3 +56,9 @@ npm i @ant-design/pro-table --save
 # 或者
 yarn add @ant-design/pro-table --save
 ```
+
+## DatePicker 不能用作 JSX 组件
+
+自己找找对应 @types/react 版本与 ts 版本依赖关系, 选择其一升级
+
+https://www.npmjs.com/package/@types/react

@@ -1,5 +1,6 @@
 import { FC, useEffect } from 'react';
-import { Form, Input, Modal, Button } from 'antd';
+import { Form, Input, Modal, Button, DatePicker, Switch } from 'antd';
+import moment from 'moment';
 
 import { SingleUserType } from '@/pages/users/data.d';
 
@@ -26,7 +27,11 @@ const UserModal: FC<UserModalProps> = ({
     // console.log('UserModal -> useEffect:', record);
     // 显示的情况赋值,隐藏的情况重置值
     if (visible) {
-      form.setFieldsValue(record);
+      form.setFieldsValue({
+        ...record,
+        createTime: moment(record?.createTime),
+        status: record?.status ? true : false,
+      });
     } else {
       form.resetFields();
     }
@@ -63,15 +68,16 @@ const UserModal: FC<UserModalProps> = ({
             // 校验规则
             rules={[{ required: true, message: 'Please input your name!' }]}
           >
-            <Input />
+            <Input placeholder="请输入用户名称" />
           </Form.Item>
-
           <Form.Item label="邮箱" name="email">
-            <Input />
+            <Input placeholder="请输入用户邮箱" />
           </Form.Item>
-
-          <Form.Item label="状态" name="status">
-            <Input />
+          <Form.Item label="时间" name="createTime">
+            <DatePicker showTime />
+          </Form.Item>
+          <Form.Item label="状态" name="status" valuePropName="checked">
+            <Switch />
           </Form.Item>
         </Form>
       </Modal>

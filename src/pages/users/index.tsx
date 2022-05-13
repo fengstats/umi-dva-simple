@@ -1,9 +1,11 @@
 import { FC, useRef, useState } from 'react';
 import { connect, Dispatch, UserStateType, Loading } from 'umi';
 import { Table, Space, Popconfirm, Button, Pagination, message } from 'antd';
-import ProTable from '@ant-design/pro-table';
+import ProTable, { ColumnsState } from '@ant-design/pro-table';
+import moment from 'moment';
 
 import { SingleUserType } from './data.d';
+import { formatDateTime } from '@/uitls';
 import { getRemoteList, addRecord, editRecord } from './service';
 import UserModal from './components/UserModal';
 
@@ -13,17 +15,17 @@ interface UserPageProps {
   dispatch: Dispatch;
 }
 
-interface ActionType {
-  reload: () => void;
-  fetchMore: () => void;
-  reset: () => void;
-}
+// interface ActionType {
+//   reload: () => void;
+//   fetchMore: () => void;
+//   reset: () => void;
+// }
 
 // FC： function components
 const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
-  const tableRef = useRef<ActionType>();
+  // const tableRef = useRef<ActionType>();
   const [visible, setVisible] = useState(false);
-  // 新增/编辑确认Loading
+  // 新增/编辑确认loading
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [record, setRecord] = useState<SingleUserType | null>(null);
 
@@ -53,11 +55,14 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
+      // 只能返回字符串用于渲染
+      renderText: (time: string) => formatDateTime(time),
     },
     {
       title: '更新时间',
       dataIndex: 'updateTime',
       key: 'updateTime',
+      renderText: (time: string) => formatDateTime(time),
     },
     {
       title: '操作',
@@ -88,7 +93,6 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
 
   // 控制-新增弹框
   const handleAdd = () => {
-    // TODO: 感觉也可以不清除,后面再看
     setRecord(null);
     setVisible(true);
   };
@@ -98,10 +102,10 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     setVisible(false);
   };
 
-  // 控制-刷新列表数据
-  const reloadHandler = () => {
-    tableRef.current.reload();
-  };
+  // (太low了这种方式)控制-刷新列表数据
+  // const reloadHandler = () => {
+  //   tableRef.current.reload();
+  // };
 
   // 控制-翻页(页码更新回调函数)
   const onPaginationHandler = (current: number, pageSize: number) => {
@@ -153,13 +157,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       console.log(res);
       if (res.code == 200) {
         message.success(`用户id：${res.data.id} ${tipText}用户成功！`);
-        dispatch({
-          type: 'users/getData',
-          payload: {
-            current: users.pagination.current,
-            pageSize: users.pagination.pageSize,
-          },
-        });
+        reqUserData();
         // 关闭弹框
         handleClose();
         return;
@@ -173,18 +171,34 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     }
   };
 
-  // 请求-确认删除
+  // 按钮-确认删除回调
   const onDeleteConfirm = (id: number) => {
     // console.log('onDeleteConfirm:', id);
-    dispatch({
-      type: 'users/delete',
-      payload: { id },
-    });
+    reqDelUser(id);
   };
 
   // 表单-失败的回调
   const onFinishFailed = (errorInfo: any) => {
     console.log('failed:', errorInfo);
+  };
+
+  // 请求-用户数据
+  const reqUserData = () => {
+    dispatch({
+      type: 'users/getData',
+      payload: {
+        current: users.pagination.current,
+        pageSize: users.pagination.pageSize,
+      },
+    });
+  };
+
+  // 请求-删除用户
+  const reqDelUser = (id: number) => {
+    dispatch({
+      type: 'users/delete',
+      payload: { id },
+    });
   };
 
   return (
@@ -198,26 +212,41 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
       <ProTable
         rowKey="id"
         search={false}
+        pagination={false}
+        headerTitle="用户管理列表"
         columns={columns}
         dataSource={users.data}
         loading={usersLoading}
         // request={requestHandler}
-        actionRef={tableRef}
-        pagination={false}
+        // actionRef={tableRef}
+        options={{
+          // 密度
+          density: true,
+          // 全屏
+          fullScreen: true,
+          reload: reqUserData,
+          setting: {
+            // draggable: boolean;
+            // checkable: boolean;
+            // checkedReset: boolean;
+            // extra: React.ReactNode;
+            // children: React.ReactNode;
+          },
+        }}
         toolBarRender={() => [
           <Button type="primary" onClick={handleAdd}>
             新增用户
           </Button>,
-          <Button onClick={reloadHandler}>重新加载</Button>,
+          <Button onClick={reqUserData}>重新加载</Button>,
         ]}
       />
       <Pagination
         className="list-pagination"
+        showSizeChanger
+        showQuickJumper
         current={users.pagination.current}
         total={users.pagination.total}
         pageSize={users.pagination.pageSize}
-        showSizeChanger
-        showQuickJumper
         showTotal={(total) => `Total ${total} items`}
         onChange={onPaginationHandler}
         pageSizeOptions={[5, 8, 12]}
