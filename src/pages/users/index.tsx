@@ -55,20 +55,24 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
     {
       title: '用户状态',
       dataIndex: 'status',
+
       key: 'status',
     },
     {
       title: '创建时间',
       dataIndex: 'createTime',
       key: 'createTime',
+      // TIP: 靠北啦,怎么还有这么好用的参数,那我还tm的封装了一个formatDateTime函数
+      valueType: 'dateTime',
       // 只能返回字符串用于渲染
-      renderText: (time: string) => formatDateTime(time),
+      // renderText: (time: string) => formatDateTime(time),
     },
     {
       title: '更新时间',
       dataIndex: 'updateTime',
       key: 'updateTime',
-      renderText: (time: string) => formatDateTime(time),
+      valueType: 'fromNow',
+      // renderText: (time: string) => formatDateTime(time),
     },
     {
       title: '操作',
@@ -116,13 +120,14 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   // 控制-翻页(页码更新回调函数)
   const onPaginationHandler = (current: number, pageSize: number) => {
     console.log(`current: ${current} pageSize: ${pageSize}`);
-    dispatch({
-      type: 'users/getData',
-      payload: {
-        current,
-        pageSize,
-      },
-    });
+    reqUserData(current, pageSize);
+    // dispatch({
+    //   type: 'users/getData',
+    //   payload: {
+    //     current,
+    //     pageSize,
+    //   },
+    // });
   };
 
   // (与dataSource冲突,存在一些问题,所以考虑不使用)请求-用户列表更新
@@ -196,12 +201,14 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
   };
 
   // 请求-用户数据
-  const reqUserData = () => {
+  const reqUserData = (current?: number, pageSize?: number) => {
+    const { pagination } = users;
     dispatch({
       type: 'users/getData',
       payload: {
-        current: users.pagination.current,
-        pageSize: users.pagination.pageSize,
+        // 给了参数就用,否则用仓库存的
+        current: current ? current : pagination.current,
+        pageSize: pageSize ? pageSize : pagination.pageSize,
       },
     });
   };
@@ -237,7 +244,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
           density: true,
           // 全屏
           fullScreen: true,
-          reload: reqUserData,
+          reload: () => reqUserData(),
           setting: {
             // draggable: boolean;
             // checkable: boolean;
@@ -250,7 +257,7 @@ const UserListPage: FC<UserPageProps> = ({ users, usersLoading, dispatch }) => {
           <Button type="primary" onClick={handleAdd}>
             新增用户
           </Button>,
-          <Button onClick={reqUserData}>重新加载</Button>,
+          <Button onClick={() => reqUserData()}>重新加载</Button>,
         ]}
       />
       <Pagination

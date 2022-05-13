@@ -24,8 +24,9 @@ interface UserModelType {
   };
   effects: {
     getData: Effect;
-    add: Effect;
-    edit: Effect;
+    // 这两个 effects 函数被我移到页面中去了
+    add?: Effect;
+    edit?: Effect;
     delete: Effect;
   };
   subscriptions: {
@@ -138,7 +139,7 @@ const UserModel: UserModelType = {
         console.log(res);
         if (res.code === 200) {
           const { current, pageSize } = yield select(
-            (state) => state.users.pagination,
+            (state: any) => state.users.pagination,
           );
           yield put({
             type: 'getData',

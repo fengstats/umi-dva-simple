@@ -13,6 +13,14 @@ interface UserModalProps {
   onFinishFailed: (errorInfo: any) => void;
 }
 
+// 表单布局设置
+const layout = {
+  // 左侧占多少列
+  labelCol: { span: 4 },
+  // 内容区域占多少列
+  wrapperCol: { span: 20 },
+};
+
 const UserModal: FC<UserModalProps> = ({
   record,
   visible,
@@ -46,7 +54,7 @@ const UserModal: FC<UserModalProps> = ({
   return (
     <div>
       <Modal
-        title="Basic Modal"
+        title={record?.id ? `编辑 ID: ${record.id}` : '新增'}
         visible={visible}
         confirmLoading={confirmLoading}
         onOk={onSubmit}
@@ -57,6 +65,7 @@ const UserModal: FC<UserModalProps> = ({
         {/* {JSON.stringify(record)} */}
         {/* initialValues: 只有初始化以及重置时生效,不能被 setState 动态更新,需要使用 setFieldsValue 更新 */}
         <Form
+          {...layout}
           name="basic"
           form={form}
           initialValues={{
