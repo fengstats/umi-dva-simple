@@ -1,4 +1,4 @@
-// ts定义
+// ts 定义
 
 // 单个用户
 export interface SingleUserType {
